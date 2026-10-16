@@ -1,0 +1,10 @@
+.side{display:grid;grid-template-columns:280px 1fr;gap:20px;align-items:start}
+.bars{display:grid;gap:8px}.bars div{display:grid;grid-template-columns:110px 1fr 28px;gap:10px;align-items:center;font-size:13px}
+.bars .bar{height:10px}
+.cards3{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.cm{padding:14px 16px;display:grid;gap:8px}.cm .r{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.lh.adm,.lr.adm{grid-template-columns:62px 1.4fr 1.6fr 100px 118px 110px 150px}
+.dia-h{display:flex;align-items:center;gap:14px;padding:10px 14px;background:var(--brand-soft);color:var(--brand);border-top:1px solid var(--line)}
+.dia-h .mut{color:var(--brand)}.dia-dl{margin-left:auto;display:flex;gap:6px}
+.dia-grupo{margin-top:18px}.dia-grupo .head-row{margin-bottom:10px}.dia-grupo h3{font-size:16px}
+.acciones-semana{display:flex;gap:8px;flex-wrap:wrap}

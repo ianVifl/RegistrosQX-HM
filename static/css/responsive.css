@@ -1,0 +1,4 @@
+@media (max-width:1100px){.nav{flex-wrap:wrap}.gA{grid-template-columns:repeat(2,1fr)}.splitC,.lay1,.side{grid-template-columns:1fr}.hB,.lh{display:none}.rB,.lr{grid-template-columns:1fr 1fr}.kpis{grid-template-columns:repeat(2,1fr)}.lay1 .panel{position:static}.clock{font-size:34px}}
+@media (max-width:640px){.gA{grid-template-columns:1fr}main,.nav{padding-left:16px;padding-right:16px}}
+
+@media (max-width:1100px){.lr.adm{grid-template-columns:1fr 1fr}.pager{margin-left:0}}

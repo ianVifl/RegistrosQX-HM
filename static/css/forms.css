@@ -1,0 +1,48 @@
+/* Formularios y listas admin */
+.fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.fg.c1{grid-template-columns:1fr}
+.f label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:4px}
+.f input,.f select{width:100%;font:inherit;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink)}
+.f input:focus,.f select:focus{border-color:var(--brand)}
+.panel{padding:20px}.panel h2{font-size:18px;margin-bottom:14px}
+.lay1{display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:start}
+.lay1 .panel{position:sticky;top:90px}
+.acts{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.lst{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+.lh,.lr{display:grid;grid-template-columns:62px 1.4fr 1.6fr 100px 118px 110px auto;gap:12px;align-items:center;padding:8px 14px;font-size:13.5px}
+.lh{background:var(--alt);color:var(--muted);font-weight:700;font-size:12.5px}
+.lr{border-top:1px solid var(--line)}.lr b{font-weight:700}
+.lr .t{font-weight:800;font-variant-numeric:tabular-nums}
+.ex{padding:14px 16px;background:var(--alt);border-top:1px solid var(--line)}
+.ex-open svg.chev{transform:rotate(180deg)}
+.slide{position:fixed;top:0;right:0;bottom:0;width:min(400px,100%);background:var(--surface);border-left:1px solid var(--line);box-shadow:-12px 0 30px rgba(0,0,0,.2);padding:28px 22px;transform:translateX(105%);transition:transform .25s;z-index:40;overflow:auto}
+.slide.open{transform:none}
+.head-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px;flex-wrap:wrap}
+.head-row h2{font-size:20px}
+.f select{appearance:auto}
+
+/* Menús desplegables con estilo propio: Chrome/Edge 135+ (appearance: base-select).
+   En otros navegadores esta regla se ignora y se usa el select nativo, que funciona igual. */
+@supports (appearance: base-select) {
+  :is(.f, .dt-hora) select,
+  :is(.f, .dt-hora) select::picker(select) { appearance: base-select; }
+  :is(.f, .dt-hora) select { color: var(--ink); cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+  :is(.f, .dt-hora) select:hover { border-color: var(--brand); }
+  :is(.f, .dt-hora) select:focus-visible { box-shadow: 0 0 0 3px var(--brand-soft); }
+  :is(.f, .dt-hora) select::picker-icon { color: var(--muted); transition: rotate .2s; }
+  :is(.f, .dt-hora) select:open::picker-icon { rotate: 180deg; }
+  :is(.f, .dt-hora) select::picker(select) {
+    /* Siempre arriba del campo, sin alternativa hacia abajo; si falta espacio, la lista hace scroll. */
+    position-area: block-start span-inline-end; position-try-order: normal; position-try-fallbacks: none;
+    margin-block-end: 6px; padding: 6px; max-height: min(320px, 55vh);
+    border: 1px solid var(--line); border-radius: 14px; background: var(--surface); color: var(--ink);
+    box-shadow: 0 18px 40px rgba(10, 20, 40, .22);
+    opacity: 0; transform: translateY(6px) scale(.98); transform-origin: bottom;
+    transition: opacity .18s, transform .18s, display .18s allow-discrete, overlay .18s allow-discrete;
+  }
+  :is(.f, .dt-hora) select:open::picker(select) { opacity: 1; transform: none; }
+  @starting-style { :is(.f, .dt-hora) select:open::picker(select) { opacity: 0; transform: translateY(6px) scale(.98); } }
+  :is(.f, .dt-hora) select option { padding: 10px 12px; border-radius: 9px; font-weight: 600; cursor: pointer; color: var(--ink); background: transparent; }
+  :is(.f, .dt-hora) select option:hover, :is(.f, .dt-hora) select option:focus-visible { background: color-mix(in srgb, var(--brand) 14%, transparent); outline: none; }
+  :is(.f, .dt-hora) select option:checked { background: var(--brand-soft); color: var(--brand); font-weight: 800; }
+}

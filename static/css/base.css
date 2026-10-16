@@ -1,0 +1,43 @@
+@font-face{font-family:'Plus Jakarta Sans';src:url('../fonts/PlusJakartaSans-Regular.ttf') format('truetype');font-weight:400;font-display:swap}
+@font-face{font-family:'Plus Jakarta Sans';src:url('../fonts/PlusJakartaSans-Medium.ttf') format('truetype');font-weight:500;font-display:swap}
+@font-face{font-family:'Plus Jakarta Sans';src:url('../fonts/PlusJakartaSans-SemiBold.ttf') format('truetype');font-weight:600;font-display:swap}
+@font-face{font-family:'Plus Jakarta Sans';src:url('../fonts/PlusJakartaSans-Bold.ttf') format('truetype');font-weight:700;font-display:swap}
+@font-face{font-family:'Plus Jakarta Sans';src:url('../fonts/PlusJakartaSans-ExtraBold.ttf') format('truetype');font-weight:800;font-display:swap}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;margin:0}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;font-size:15px;line-height:1.4}
+:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.nav{display:flex;align-items:center;gap:10px;padding:10px 28px;background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;margin-right:18px}
+.brand img{height:40px;width:auto;display:block;flex-shrink:0;object-fit:contain}
+.brand small{display:block;font-weight:500;color:var(--accent);font-size:12px}
+.nav a{color:var(--muted);text-decoration:none;font-weight:600;padding:8px 14px;border-radius:999px;cursor:pointer}
+.nav a[aria-current]{background:var(--brand-soft);color:var(--brand)}
+.sp{flex:1}
+.clock{font-weight:800;font-size:44px;line-height:1;font-variant-numeric:tabular-nums;padding:6px 18px;border-radius:14px;background:var(--alt);color:var(--brand);margin:0 6px}
+.btn{font:inherit;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:9px 14px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.btn:hover{border-color:var(--brand);color:var(--brand)}
+.btn.pri{background:var(--brand);border-color:var(--brand);color:var(--surface)}
+.btn.pri:hover{color:var(--surface);opacity:.9}
+.btn.sm{padding:5px 10px;font-size:13px;border-radius:8px}
+.btn.ic{padding:8px;gap:5px}.bd{font-weight:800;font-size:13px}
+.btn.dng{color:var(--red)}
+svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+main{padding:22px 28px 50px}
+.legend{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:13px;margin-bottom:14px}
+.legend b{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.pill{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:13px;padding:5px 12px;border-radius:999px;white-space:nowrap}
+.pill::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.s-prog{background:var(--green-soft);color:var(--green)}.s-prog::before{animation:bl 1.6s infinite}
+.s-esp{background:var(--blue-soft);color:var(--blue)}
+.s-fin{background:var(--gray-soft);color:var(--gray)}
+.seg{font-weight:600;font-size:12.5px;padding:3px 10px;border-radius:8px;white-space:nowrap}
+.seg-no{background:var(--amber-soft);color:var(--amber)}.seg-si{background:var(--violet-soft);color:var(--violet)}
+.lbl{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:2px}
+.bar{height:6px;background:var(--gray-soft);border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:var(--green);border-radius:9px}
+@keyframes bl{50%{opacity:.35}}
+@media (prefers-reduced-motion:reduce){.pill::before{animation:none!important}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px}
+.c-prog{border-color:var(--green);box-shadow:inset 5px 0 0 var(--green)}.c-esp{box-shadow:inset 5px 0 0 var(--blue)}.c-fin{box-shadow:inset 5px 0 0 var(--gray);opacity:.8}
+.big{font-size:20px;font-weight:800;line-height:1.2}.t-q{font-weight:800;color:var(--accent)}.mut{color:var(--muted);font-size:13px}
+[hidden]{display:none!important}

@@ -1,0 +1,27 @@
+/* Transiciones entre pantallas, vistas y temas.
+   Con View Transitions API la barra se queda fija y solo el contenido se funde y desliza;
+   sin soporte se usa .entra (fundido simple). Los refrescos automáticos no animan. */
+#view { view-transition-name: contenido; }
+.nav { view-transition-name: barra; }
+
+::view-transition-group(contenido),
+::view-transition-group(barra) { animation-duration: .4s; animation-timing-function: cubic-bezier(.2, .8, .2, 1); }
+::view-transition-old(contenido) { animation: vt-sale .18s ease-in both; }
+::view-transition-new(contenido) { animation: vt-entra .4s .08s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes vt-sale { to { opacity: 0; transform: translateY(-10px); } }
+@keyframes vt-entra { from { opacity: 0; transform: translateY(16px); } }
+
+.entra { animation: vista-in .4s cubic-bezier(.2, .8, .2, 1); }
+@keyframes vista-in { from { opacity: 0; transform: translateY(14px); } }
+
+/* Microinteracciones */
+.btn { transition: border-color .15s, color .15s, background-color .15s, transform .12s, opacity .15s; }
+.btn:active { transform: scale(.97); }
+.nav a { transition: background-color .25s, color .25s; }
+.card { transition: box-shadow .25s, border-color .25s; }
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none; }
+  .entra { animation: none; }
+  .btn:active { transform: none; }
+}

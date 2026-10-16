@@ -1,0 +1,52 @@
+.more{width:fit-content;margin:10px 0 0 auto;padding:6px 18px;border-radius:999px;background:var(--brand-soft);color:var(--brand);font-weight:800;font-size:18px}
+.empty{padding:48px;text-align:center;color:var(--muted);font-size:20px;font-weight:600;border:1px solid var(--line);border-radius:16px}
+.btn.fill-dng{background:var(--red);border-color:var(--red);color:#fff}
+.pager{display:flex;align-items:center;gap:8px;margin-left:auto}
+.pager-t{font-weight:700;min-width:200px;text-align:center}
+/* ---------- Avisos (toasts) ---------- */
+.toasts{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:100;display:flex;flex-direction:column;gap:10px;width:min(460px,calc(100vw - 24px));pointer-events:none}
+.toast{--acc:var(--green);position:relative;overflow:hidden;pointer-events:auto;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:16px 14px 18px 20px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:18px;box-shadow:0 18px 44px rgba(10,20,40,.22),0 2px 6px rgba(10,20,40,.08);animation:toast-in .45s cubic-bezier(.2,.9,.3,1.25)}
+.toast::before{content:"";position:absolute;inset:0 auto 0 0;width:6px;background:var(--acc)}
+.toast.error{--acc:var(--red);animation:toast-in .45s cubic-bezier(.2,.9,.3,1.25),sacudir .5s .35s}
+.toast.saliendo{animation:toast-out .3s ease-in forwards}
+.t-ic{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--acc) 16%,transparent);color:var(--acc);animation:pop .5s .1s cubic-bezier(.2,.9,.3,1.5) both}
+.t-ic svg{width:32px;height:32px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.t-ic .c{stroke-dasharray:63;stroke-dashoffset:63;animation:trazo .5s .1s ease-out forwards}
+.t-ic .m{stroke-dasharray:24;stroke-dashoffset:24;animation:trazo .35s .4s ease-out forwards}
+.t-tx{display:grid;gap:2px;min-width:0}
+.t-tx b{font-size:16px;font-weight:800}
+.t-tx span{color:var(--muted);font-size:14.5px;font-weight:600;overflow-wrap:anywhere}
+.t-x{all:unset;box-sizing:border-box;cursor:pointer;color:var(--muted);width:32px;height:32px;display:grid;place-items:center;border-radius:9px}
+.t-x:hover{background:var(--alt);color:var(--ink)}
+.t-x:focus-visible{outline:3px solid var(--brand)}
+.t-x svg{width:16px;height:16px}
+.t-bar{position:absolute;left:6px;right:0;bottom:0;height:4px;background:var(--acc);opacity:.55;transform-origin:left;animation:barra linear forwards}
+.toast:hover .t-bar{animation-play-state:paused}
+
+/* ---------- Confirmación ---------- */
+dialog{border:0;border-radius:24px;padding:0;background:var(--surface);color:var(--ink);width:min(420px,92vw);margin:auto;box-shadow:0 30px 80px rgba(8,16,30,.45);overflow:hidden}
+dialog[open]{animation:dlg-in .3s cubic-bezier(.2,.9,.3,1.2)}
+dialog::backdrop{background:rgba(8,16,30,.5);backdrop-filter:blur(4px);animation:fundido .25s}
+.dlg{--acc:var(--brand);padding:30px 28px 24px;text-align:center}
+.dlg.peligro{--acc:var(--red)}
+.dlg-ic{width:64px;height:64px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--acc) 15%,transparent);color:var(--acc);animation:pop .45s .1s cubic-bezier(.2,.9,.3,1.5) both}
+.dlg-ic svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.dlg h2{font-size:21px;margin-bottom:6px}
+.dlg p{color:var(--muted);line-height:1.5}
+.dlg p b{color:var(--ink)}
+.dlg .acts{justify-content:center;margin-top:22px}
+.dlg .btn{min-width:130px;justify-content:center;padding:11px 16px;font-weight:700}
+
+@keyframes toast-in{from{opacity:0;transform:translateY(-28px) scale(.94)}to{opacity:1;transform:none}}
+@keyframes toast-out{to{opacity:0;transform:translateY(-16px) scale(.96)}}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:none;opacity:1}}
+@keyframes trazo{to{stroke-dashoffset:0}}
+@keyframes barra{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+@keyframes sacudir{0%,100%{translate:0}20%{translate:-7px}40%{translate:6px}60%{translate:-4px}80%{translate:3px}}
+@keyframes dlg-in{from{opacity:0;transform:translateY(14px) scale(.94)}to{opacity:1;transform:none}}
+@keyframes fundido{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){
+  .toast,.toast.error,.t-ic,.t-ic .c,.t-ic .m,dialog[open],dialog::backdrop,.dlg-ic{animation:none}
+  .t-ic .c,.t-ic .m{stroke-dashoffset:0}
+  .t-bar{opacity:0} /* sigue corriendo: es el temporizador de cierre */
+}
