@@ -37,7 +37,7 @@ cp .env.example .env
 | Ver y descargar la bitácora | ✅ | ❌ | ❌ |
 | **Duración de la sesión** | 12 h | 24 h | 30 días |
 
-Detalle y notas en [PERMISOS.md](PERMISOS.md).
+Detalle y notas en [PERMISOS.md](PERMISOS.md). Descripción general, historias de usuario y flujo típico en [PROYECTO.md](PROYECTO.md).
 
 No hay un administrador por defecto. El primero se crea desde la terminal:
 
