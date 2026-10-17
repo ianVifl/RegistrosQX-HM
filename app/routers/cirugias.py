@@ -4,7 +4,7 @@ from typing import Literal
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Response, status
 from sqlalchemy.orm import Session
 
-from app import crud, exports, models
+from app import crud, exports, models, seguridad
 from app.config import TZ
 from app.database import get_db
 from app.realtime import manager
@@ -31,7 +31,7 @@ def _validar_traslape(db: Session, datos: CirugiaCreate, excluir_id: int | None 
         )
 
 
-@router.post("", response_model=CirugiaOut, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=CirugiaOut, status_code=status.HTTP_201_CREATED, dependencies=[Depends(seguridad.editor)])
 def crear_cirugia(
     datos: CirugiaCreate,
     background: BackgroundTasks,
@@ -43,7 +43,7 @@ def crear_cirugia(
     return cirugia
 
 
-@router.get("", response_model=list[CirugiaOut])
+@router.get("", response_model=list[CirugiaOut], dependencies=[Depends(seguridad.cualquier_rol)])
 def listar_cirugias(
     fecha: date | None = None,
     desde: date | None = None,
@@ -59,7 +59,7 @@ def listar_cirugias(
     return crud.obtenerCirugiasPorFecha(db, fecha or datetime.now(TZ).date())
 
 
-@router.get("/{cirugia_id}", response_model=CirugiaOut)
+@router.get("/{cirugia_id}", response_model=CirugiaOut, dependencies=[Depends(seguridad.cualquier_rol)])
 def obtener_cirugia(cirugia_id: int, db: Session = Depends(get_db)) -> models.Cirugia:
     cirugia = crud.obtenerRegistroCirugiaPorId(db, cirugia_id)
     if cirugia is None:
@@ -67,7 +67,7 @@ def obtener_cirugia(cirugia_id: int, db: Session = Depends(get_db)) -> models.Ci
     return cirugia
 
 
-@router.put("/{cirugia_id}", response_model=CirugiaOut)
+@router.put("/{cirugia_id}", response_model=CirugiaOut, dependencies=[Depends(seguridad.editor)])
 def modificar_cirugia(
     cirugia_id: int,
     datos: CirugiaUpdate,
@@ -82,7 +82,7 @@ def modificar_cirugia(
     return cirugia
 
 
-@router.patch("/{cirugia_id}/estatus", response_model=CirugiaOut)
+@router.patch("/{cirugia_id}/estatus", response_model=CirugiaOut, dependencies=[Depends(seguridad.editor)])
 def cambiar_estatus(
     cirugia_id: int,
     datos: EstatusUpdate,
@@ -96,7 +96,7 @@ def cambiar_estatus(
     return cirugia
 
 
-@router.delete("/{cirugia_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=None)
+@router.delete("/{cirugia_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=None, dependencies=[Depends(seguridad.solo_admin)])
 def eliminar_cirugia(
     cirugia_id: int,
     background: BackgroundTasks,
@@ -108,7 +108,7 @@ def eliminar_cirugia(
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-@router.get("/{cirugia_id}/exportar")
+@router.get("/{cirugia_id}/exportar", dependencies=[Depends(seguridad.editor)])
 def exportar_cirugia(
     cirugia_id: int,
     formato: Literal["pdf", "xlsx"],

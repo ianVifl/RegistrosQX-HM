@@ -4,11 +4,11 @@ from typing import Literal
 from fastapi import APIRouter, Depends, Response
 from sqlalchemy.orm import Session
 
-from app import crud, exports
+from app import crud, exports, seguridad
 from app.database import get_db
 from app.validaciones import validar_rango
 
-router = APIRouter(prefix="/reportes", tags=["reportes"])
+router = APIRouter(prefix="/reportes", tags=["reportes"], dependencies=[Depends(seguridad.editor)])
 
 
 @router.get("/exportar")

@@ -1,4 +1,5 @@
 import os
+from datetime import datetime, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -31,3 +32,19 @@ STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 # hora ya llegó pasan a "EN PROGRESO".
 ACTUALIZAR_CADA_MIN = int(os.getenv("ACTUALIZAR_CADA_MIN", "30"))
 MAX_DIAS_RANGO = 31
+
+# Sesiones
+SECRET_KEY = _requerida("SECRET_KEY")  # firma los tokens: si cambia, todas las sesiones se invalidan
+if len(SECRET_KEY.encode()) < 32:  # mínimo para HS256 según RFC 7518, sección 3.2
+    raise RuntimeError("SECRET_KEY debe tener al menos 32 bytes")
+COOKIE_SECURE = os.getenv("COOKIE_SECURE", "false").lower() == "true"  # true solo cuando se sirva por HTTPS
+
+
+def ahora() -> datetime:
+    """Hora local sin zona: la BD guarda las fechas así."""
+    return datetime.now(TZ).replace(tzinfo=None)
+
+
+def ahora_utc() -> datetime:
+    """Para la expiración de los tokens: el estándar JWT (claim exp) se mide en UTC."""
+    return datetime.now(timezone.utc)

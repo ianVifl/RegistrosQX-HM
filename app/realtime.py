@@ -1,4 +1,8 @@
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, status
+from fastapi.concurrency import run_in_threadpool
+
+from app import seguridad
+from app.database import SessionLocal
 
 
 class ConnectionManager:
@@ -29,8 +33,17 @@ manager = ConnectionManager()
 router = APIRouter()
 
 
+def _sesion_valida(token: str | None) -> bool:
+    with SessionLocal() as db:
+        return seguridad.usuario_de_token(db, token) is not None
+
+
 @router.websocket("/ws")
 async def ws_cambios(ws: WebSocket) -> None:
+    # El navegador manda la cookie de sesión en el handshake (no permite headers como Authorization).
+    if not await run_in_threadpool(_sesion_valida, ws.cookies.get(seguridad.COOKIE)):
+        await ws.close(code=status.WS_1008_POLICY_VIOLATION)
+        return
     await manager.connect(ws)
     try:
         while True:

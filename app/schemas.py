@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from enum import Enum
+from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field, computed_field, field_validator
 
@@ -90,3 +91,57 @@ class CirugiaOut(BaseModel):
     @property
     def fechaFinEstimada(self) -> datetime:
         return self.fechaCirugia + timedelta(minutes=self.duracionEstimada)
+
+
+# ---------- Usuarios y sesión ----------
+
+class Rol(str, Enum):
+    ADMIN = "ADMIN"
+    CAPTURISTA = "CAPTURISTA"
+    VISUALIZADOR = "VISUALIZADOR"
+
+
+Password = Annotated[str, Field(min_length=8, max_length=128)]
+
+
+class LoginIn(BaseModel):
+    usuario: str = Field(min_length=1, max_length=50)
+    password: str = Field(min_length=1, max_length=128)
+
+
+class UsuarioOut(BaseModel):
+    id: int
+    usuario: str
+    nombre: str
+    rol: str
+    activo: bool
+    creadoEn: datetime
+    actualizadoEn: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class UsuarioUpdate(BaseModel):
+    nombre: str = Field(min_length=1, max_length=150)
+    rol: Rol
+
+    model_config = ConfigDict(use_enum_values=True)
+
+    @field_validator("nombre", mode="before")
+    @classmethod
+    def limpiar_espacios(cls, v):
+        return " ".join(v.split()) if isinstance(v, str) else v
+
+
+class UsuarioCreate(UsuarioUpdate):
+    # Letras, números, punto, guion y guion bajo: se teclea en el login, sin espacios ni acentos
+    usuario: str = Field(min_length=3, max_length=50, pattern=r"^[A-Za-z0-9._-]+$")
+    password: Password
+
+
+class ActivoUpdate(BaseModel):
+    activo: bool
+
+
+class PasswordUpdate(BaseModel):
+    password: Password

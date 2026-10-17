@@ -18,6 +18,25 @@ cp .env.example .env
 | `APP_TZ` | No | Zona horaria de las fechas (por defecto `America/Mexico_City`) |
 | `CORS_ORIGINS` | No | Orígenes permitidos, separados por coma |
 | `ACTUALIZAR_CADA_MIN` | No | Cada cuántos minutos se actualiza el estatus de las cirugías (por defecto 30) |
+| `SECRET_KEY` | Sí | Firma las sesiones; mínimo 32 bytes. Genera una con `python -c "import secrets; print(secrets.token_urlsafe(48))"`. Si cambia, todas las sesiones se cierran |
+| `COOKIE_SECURE` | No | `true` solo si la app se sirve por HTTPS (por defecto `false`) |
+
+## Usuarios y roles
+
+| Rol | Puede | Sesión |
+|---|---|---|
+| `ADMIN` | Todo, incluida la gestión de usuarios, la bitácora y eliminar cirugías | 12 h |
+| `CAPTURISTA` | Registrar, editar y cambiar estatus; ver Administración y exportar. No elimina | 24 h |
+| `VISUALIZADOR` | Solo el Dashboard | 30 días |
+
+No hay un administrador por defecto. El primero se crea desde la terminal:
+
+```bash
+python -m app.crear_admin                                  # local
+sudo docker compose run --rm api python -m app.crear_admin # servidor
+```
+
+> La app corre por HTTP en la red local: las contraseñas viajan sin cifrar. Se recomienda servirla por HTTPS y poner `COOKIE_SECURE=true`.
 
 ## Desarrollo local
 
@@ -64,6 +83,7 @@ chmod 600 .env       # solo el dueño puede leer el archivo (contiene la contras
 sudo docker compose build
 sudo docker compose run --rm api alembic upgrade head   # migraciones antes de levantar la app
 sudo docker compose up -d
+sudo docker compose run --rm api python -m app.crear_admin   # solo la primera vez
 ```
 
 > MySQL/MariaDB no permiten deshacer cambios de esquema (DDL) dentro de una transacción: si una migración falla a la mitad, queda aplicada a medias. **Respalda la BD antes de migrar** (`mysqldump`).

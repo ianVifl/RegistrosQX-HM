@@ -10,7 +10,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app import realtime
 from app.config import CORS_ORIGINS, STATIC_DIR
-from app.routers import cirugias, reportes
+from app.routers import auth, cirugias, reportes
 from app.scheduler import ciclo_estatus
 
 log = logging.getLogger(__name__)
@@ -45,6 +45,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth.router)
 app.include_router(cirugias.router)
 app.include_router(reportes.router)
 app.include_router(realtime.router)
