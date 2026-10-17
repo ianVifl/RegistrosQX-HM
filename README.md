@@ -30,6 +30,15 @@ uvicorn app.main:app --reload
 
 La app queda en http://localhost:8000 y la documentación de la API en http://localhost:8000/docs.
 
+## Tests
+
+```bash
+pip install -r requirements-dev.txt
+pytest
+```
+
+Usan una BD aparte, `registros_cirugias_test` (o la que indique `TEST_DB_NAME`), en el mismo servidor del `.env`: se crea sola y se le aplican las migraciones. Por seguridad solo corren contra un host local y una BD cuyo nombre termine en `_test`.
+
 ## Migraciones (Alembic)
 
 El esquema de la BD lo administra Alembic; la app **no** crea tablas al arrancar.
