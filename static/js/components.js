@@ -77,8 +77,8 @@ export function formulario(p, r = {}, { edicion = false, columna = false } = {})
     ${edicion ? campo("e", "Estatus", `<select id="${p}e">${Object.entries(ESTATUS).map(([v, i]) =>
       `<option value="${v}" ${v === r.estatus ? "selected" : ""}>${i.txt}</option>`).join("")}</select>`) : ""}
     ${campo("a", "Aseguradora (No si no tiene)", `<input id="${p}a" value="${esc(r.aseguradora ?? "No")}">`)}
-    ${campo("dx", "Diagnóstico (opcional)", `<textarea id="${p}dx" rows="3">${esc(r.diagnostico)}</textarea>`, undefined, "ancho")}
-    ${campo("se", "Servicios especiales (opcional)", `<textarea id="${p}se" rows="3">${esc(r.serviciosEspeciales)}</textarea>`, undefined, "ancho")}
+    ${campo("dx", "Diagnóstico", `<textarea id="${p}dx" rows="3">${esc(r.diagnostico)}</textarea>`, undefined, "ancho")}
+    ${campo("se", "Servicios especiales", `<textarea id="${p}se" rows="3">${esc(r.serviciosEspeciales)}</textarea>`, undefined, "ancho")}
   </div><datalist id="lista-cirujanos">${CIRUJANOS.map(c => `<option value="${c}">`).join("")}</datalist>`;
 }
 
