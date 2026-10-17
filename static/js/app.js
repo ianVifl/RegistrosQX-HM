@@ -40,7 +40,7 @@ export async function cargar({ animar = false } = {}) {
 }
 
 /** Hay un formulario a medias en Registro: no se recarga sola la pantalla para no borrarlo. */
-const editando = () => estado.abierto !== null || ["nn", "nc", "np"].some(id => $(id)?.value);
+const editando = () => estado.abierto !== null || ["nn", "ned", "np", "ndx", "nse"].some(id => $(id)?.value);
 export function refrescar() {
   if (estado.pagina === "reg" && editando()) return;
   cargar();

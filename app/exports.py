@@ -16,13 +16,18 @@ MEDIA = {
     "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 }
 
+SEXO = {"FEMENINO": "Femenino", "MASCULINO": "Masculino"}
+
 COLUMNAS = [
     ("Fecha", lambda c: c.fechaCirugia.strftime("%d/%m/%Y")),
     ("Hora", lambda c: c.fechaCirugia.strftime("%H:%M")),
     ("Quirófano", lambda c: c.quirofano),
     ("Paciente", lambda c: c.nombrePaciente),
-    ("Código", lambda c: c.codigoPaciente),
+    ("Edad", lambda c: c.edad),
+    ("Sexo", lambda c: SEXO.get(c.sexo, c.sexo)),
     ("Procedimiento", lambda c: c.procedimiento),
+    ("Diagnóstico", lambda c: c.diagnostico or ""),
+    ("Servicios especiales", lambda c: c.serviciosEspeciales or ""),
     ("Cirujano", lambda c: c.cirujano),
     ("Duración (min)", lambda c: c.duracionEstimada),
     ("Estatus", lambda c: c.estatus),
@@ -47,6 +52,9 @@ def generar_xlsx(cirugias, titulo: str) -> bytes:
         celda.alignment = Alignment(vertical="center")
     for c in cirugias:
         ws.append([f(c) for _, f in COLUMNAS])
+    for fila in ws.iter_rows(min_row=2):
+        for celda in fila:
+            celda.alignment = Alignment(vertical="top", wrap_text=True)  # diagnóstico y servicios pueden ser largos
     for i, col in enumerate(ws.columns, start=1):
         ancho = max(len(str(celda.value or "")) for celda in col)
         ws.column_dimensions[get_column_letter(i)].width = min(ancho + 3, 45)
@@ -67,8 +75,10 @@ def generar_pdf(cirugias, titulo: str) -> bytes:
 
     datos = [[p(n, cabecera) for n, _ in COLUMNAS]]
     datos += [[p(f(c), celda) for _, f in COLUMNAS] for c in cirugias]
-    tabla = Table(datos, repeatRows=1, colWidths=[52, 34, 55, 100, 55, 115, 95, 40, 60, 65])
+    tabla = Table(datos, repeatRows=1, colWidths=[48, 30, 54, 76, 26, 48, 78, 86, 82, 70, 42, 64, 60])
     tabla.setStyle(TableStyle([
+        ("LEFTPADDING", (0, 0), (-1, -1), 3),  # 13 columnas: el padding por defecto (6) parte las palabras
+        ("RIGHTPADDING", (0, 0), (-1, -1), 3),
         ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1D4ED8")),
         ("GRID", (0, 0), (-1, -1), 0.4, colors.HexColor("#CBD5E1")),
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),

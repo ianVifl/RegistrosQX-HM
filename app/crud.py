@@ -8,17 +8,21 @@ from app.models import Cirugia
 def crearRegistroCirugia(
     db: Session,
     nombrePaciente: str,
-    codigoPaciente: str,
+    edad: int,
+    sexo: str,
     fechaCirugia: datetime,
     procedimiento: str,
     duracionEstimada: int,
     cirujano: str,
     quirofano: str,
     aseguradora: str | None,
+    serviciosEspeciales: str | None,
+    diagnostico: str | None,
 ) -> Cirugia:
     nueva_cirugia = Cirugia(
         nombrePaciente=nombrePaciente,
-        codigoPaciente=codigoPaciente,
+        edad=edad,
+        sexo=sexo,
         fechaCirugia=fechaCirugia,
         procedimiento=procedimiento,
         duracionEstimada=duracionEstimada,
@@ -26,6 +30,8 @@ def crearRegistroCirugia(
         estatus="PROGRAMADA",  # regla de negocio: todo alta nace programada
         quirofano=quirofano,
         aseguradora=aseguradora,
+        serviciosEspeciales=serviciosEspeciales,
+        diagnostico=diagnostico,
     )
     db.add(nueva_cirugia)
     db.commit()
@@ -89,7 +95,8 @@ def modificarRegistroCirugia(
     db: Session,
     cirugia_id: int,
     nombrePaciente: str,
-    codigoPaciente: str,
+    edad: int,
+    sexo: str,
     fechaCirugia: datetime,
     procedimiento: str,
     duracionEstimada: int,
@@ -97,11 +104,14 @@ def modificarRegistroCirugia(
     estatus: str,
     quirofano: str,
     aseguradora: str | None,
+    serviciosEspeciales: str | None,
+    diagnostico: str | None,
 ) -> Cirugia | None:
     cirugia = db.get(Cirugia, cirugia_id)
     if cirugia:
         cirugia.nombrePaciente = nombrePaciente
-        cirugia.codigoPaciente = codigoPaciente
+        cirugia.edad = edad
+        cirugia.sexo = sexo
         cirugia.fechaCirugia = fechaCirugia
         cirugia.procedimiento = procedimiento
         cirugia.duracionEstimada = duracionEstimada
@@ -109,6 +119,8 @@ def modificarRegistroCirugia(
         cirugia.estatus = estatus
         cirugia.quirofano = quirofano
         cirugia.aseguradora = aseguradora
+        cirugia.serviciosEspeciales = serviciosEspeciales
+        cirugia.diagnostico = diagnostico
         db.commit()
         db.refresh(cirugia)
     return cirugia

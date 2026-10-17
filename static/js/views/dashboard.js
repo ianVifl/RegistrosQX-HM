@@ -1,6 +1,6 @@
 import { estado, diaDash } from "../state.js";
 import { esc, hm, inicio, fin, durCorta, nombreDia, porHora, infoEstatus } from "../utils.js";
-import { pill, seg, barra, kpi, leyenda, pager, vacio } from "../components.js";
+import { pill, seg, barra, kpi, leyenda, pager, vacio, datosPaciente, notasClinicas } from "../components.js";
 
 const MAX = 6;
 const VISIBLES = ["PROGRAMADA", "EN PROGRESO"]; // las finalizadas no se muestran aquí
@@ -18,25 +18,25 @@ const tarjeta = r => `<article class="card cA c-${infoEstatus(r).cls}">
   <div class="top"><span class="t-q">${esc(r.quirofano)}</span>${pill(r)}</div>
   <div class="time">${hm(inicio(r))} <small>a ${hm(fin(r))} (${durCorta(r.duracionEstimada)})</small></div>${barra(r)}
   <div><div class="lbl">Procedimiento</div><div class="big">${esc(r.procedimiento)}</div></div>
-  <div><div class="lbl">Paciente</div><b>${esc(r.nombrePaciente)}</b><div class="mut">${esc(r.codigoPaciente)}</div></div>
+  <div><div class="lbl">Paciente</div><b>${esc(r.nombrePaciente)}</b><div class="mut">${datosPaciente(r)}</div></div>${notasClinicas(r)}
   <div class="foot"><div><div class="lbl">Cirujano</div><b>${esc(r.cirujano)}</b></div>${seg(r)}</div></article>`;
 
 const fila = r => `<article class="card rB c-${infoEstatus(r).cls}">
   <div class="big">${hm(inicio(r))}<div class="lbl" style="font-weight:500">${durCorta(r.duracionEstimada)}</div></div>
-  <div><b>${esc(r.nombrePaciente)}</b><div class="mut">${esc(r.codigoPaciente)}</div></div>
-  <div style="font-weight:600">${esc(r.procedimiento)}${barra(r) && `<div style="margin-top:8px">${barra(r)}</div>`}</div>
+  <div><b>${esc(r.nombrePaciente)}</b><div class="mut">${datosPaciente(r)}</div></div>
+  <div><div style="font-weight:600">${esc(r.procedimiento)}</div>${notasClinicas(r)}${barra(r) && `<div style="margin-top:8px">${barra(r)}</div>`}</div>
   <div>${esc(r.cirujano)}</div><div class="t-q">${esc(r.quirofano)}</div>${seg(r)}${pill(r)}</article>`;
 
 const enCurso = r => `<article class="card cC c-prog">
   <div class="head"><span class="t-q big">${esc(r.quirofano)}</span>${seg(r)}</div>
   <div><div class="lbl">Procedimiento</div><div class="big">${esc(r.procedimiento)}</div></div>
-  <div class="two"><div><div class="lbl">Paciente</div><b>${esc(r.nombrePaciente)}</b><div class="mut">${esc(r.codigoPaciente)}</div></div>
-  <div><div class="lbl">Cirujano</div><b>${esc(r.cirujano)}</b></div></div>
+  <div class="two"><div><div class="lbl">Paciente</div><b>${esc(r.nombrePaciente)}</b><div class="mut">${datosPaciente(r)}</div></div>
+  <div><div class="lbl">Cirujano</div><b>${esc(r.cirujano)}</b></div></div>${notasClinicas(r)}
   <div>${barra(r)}<div class="pm"><span>Inicio ${hm(inicio(r))}</span><span>Salida estimada ${hm(fin(r))}</span></div></div></article>`;
 
 const siguiente = r => `<div class="nx"><span class="h">${hm(inicio(r))}</span>
   <div><b>${esc(r.procedimiento)}</b><div class="mut">${esc(r.quirofano)}, ${esc(r.cirujano)}</div>
-  <div class="mut">${esc(r.nombrePaciente)} (${esc(r.codigoPaciente)})</div></div>${seg(r)}</div>`;
+  <div class="mut">${esc(r.nombrePaciente)} (${datosPaciente(r)})</div>${notasClinicas(r)}</div>${seg(r)}</div>`;
 
 export const dashboard = {
   barra: () => `<div class="toolbar">${leyenda()}${pager(nombreDia(diaDash()))}</div>`,

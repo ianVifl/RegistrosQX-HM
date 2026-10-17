@@ -10,19 +10,29 @@ class EstatusCirugia(str, Enum):
     FINALIZADA = "FINALIZADA"
 
 
+class Sexo(str, Enum):
+    FEMENINO = "FEMENINO"
+    MASCULINO = "MASCULINO"
+
+
 class CirugiaBase(BaseModel):
     nombrePaciente: str = Field(min_length=1, max_length=255)
-    codigoPaciente: str = Field(min_length=1, max_length=255)
+    edad: int = Field(ge=0, le=120)
+    sexo: Sexo
     fechaCirugia: datetime
     procedimiento: str = Field(min_length=1, max_length=255)
     duracionEstimada: int = Field(gt=0, le=720, multiple_of=30)
     cirujano: str = Field(min_length=1, max_length=150)
     quirofano: str = Field(min_length=1, max_length=50)
     aseguradora: str | None = Field(default="No", max_length=255)
+    serviciosEspeciales: str | None = None
+    diagnostico: str | None = None
+
+    model_config = ConfigDict(use_enum_values=True)
 
     @field_validator(
-        "nombrePaciente", "codigoPaciente", "procedimiento",
-        "cirujano", "quirofano", "aseguradora",
+        "nombrePaciente", "procedimiento", "cirujano", "quirofano",
+        "aseguradora", "serviciosEspeciales", "diagnostico",
         mode="before",
     )
     @classmethod
@@ -34,6 +44,11 @@ class CirugiaBase(BaseModel):
     def aseguradora_por_defecto(cls, v):
         return v or "No"
 
+    @field_validator("serviciosEspeciales", "diagnostico", mode="after")
+    @classmethod
+    def vacio_a_nulo(cls, v):
+        return v or None
+
 
 class CirugiaCreate(CirugiaBase):
     pass
@@ -41,7 +56,6 @@ class CirugiaCreate(CirugiaBase):
 
 class CirugiaUpdate(CirugiaBase):
     estatus: EstatusCirugia
-    model_config = ConfigDict(use_enum_values=True)
 
 
 class EstatusUpdate(BaseModel):
@@ -52,7 +66,8 @@ class EstatusUpdate(BaseModel):
 class CirugiaOut(BaseModel):
     id: int
     nombrePaciente: str | None = None
-    codigoPaciente: str
+    edad: int
+    sexo: str
     fechaCirugia: datetime
     procedimiento: str
     duracionEstimada: int
@@ -60,6 +75,8 @@ class CirugiaOut(BaseModel):
     estatus: str
     quirofano: str
     aseguradora: str | None = "No"
+    serviciosEspeciales: str | None = None
+    diagnostico: str | None = None
     fechaDeRegistro: datetime
 
     model_config = ConfigDict(from_attributes=True)

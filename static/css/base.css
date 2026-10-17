@@ -41,3 +41,7 @@ main{padding:22px 28px 50px}
 .c-prog{border-color:var(--green);box-shadow:inset 5px 0 0 var(--green)}.c-esp{box-shadow:inset 5px 0 0 var(--blue)}.c-fin{box-shadow:inset 5px 0 0 var(--gray);opacity:.8}
 .big{font-size:20px;font-weight:800;line-height:1.2}.t-q{font-weight:800;color:var(--accent)}.mut{color:var(--muted);font-size:13px}
 [hidden]{display:none!important}
+
+/* Diagnóstico y servicios especiales (texto libre, puede ser largo) */
+.nota{font-size:13px;white-space:pre-line;overflow-wrap:anywhere}
+.nota .lbl{margin-bottom:1px}

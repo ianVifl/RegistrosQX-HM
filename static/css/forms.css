@@ -2,8 +2,10 @@
 .fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
 .fg.c1{grid-template-columns:1fr}
 .f label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:4px}
-.f input,.f select{width:100%;font:inherit;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink)}
-.f input:focus,.f select:focus{border-color:var(--brand)}
+.f input,.f select,.f textarea{width:100%;font:inherit;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink)}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--brand)}
+.f textarea{resize:vertical;min-height:70px}
+.f.ancho{grid-column:1/-1}
 .panel{padding:20px}.panel h2{font-size:18px;margin-bottom:14px}
 .lay1{display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:start}
 .lay1 .panel{position:sticky;top:90px}

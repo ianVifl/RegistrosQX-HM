@@ -27,7 +27,7 @@ def _validar_traslape(db: Session, datos: CirugiaCreate, excluir_id: int | None 
         raise HTTPException(
             status.HTTP_409_CONFLICT,
             f"{datos.quirofano} ya tiene una cirugía de {choque.fechaCirugia:%H:%M} a {fin:%H:%M} "
-            f"({choque.codigoPaciente})",
+            f"({choque.nombrePaciente})",
         )
 
 
@@ -118,5 +118,5 @@ def exportar_cirugia(
     if cirugia is None:
         raise _no_encontrada()
     return exports.respuesta_archivo(
-        [cirugia], formato, f"Cirugía {cirugia.codigoPaciente}", f"cirugia_{cirugia.id}"
+        [cirugia], formato, f"Cirugía de {cirugia.nombrePaciente}", f"cirugia_{cirugia.id}"
     )

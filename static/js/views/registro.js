@@ -1,7 +1,7 @@
 import { estado, lunes } from "../state.js";
 import { IC } from "../icons.js";
 import { esc, hm, inicio, agruparPorDia, nombreDia, rangoSemana } from "../utils.js";
-import { pill, seg, vacio, formulario, pager } from "../components.js";
+import { pill, seg, vacio, formulario, pager, datosPaciente } from "../components.js";
 
 const paginador = () => pager(`Semana del ${rangoSemana(lunes())}`);
 const cabecera = () => `<div class="head-row"><h2>Registros de la semana</h2>${paginador()}</div>`;
@@ -15,7 +15,7 @@ export const panelNuevo = () => `<div class="head-row"><h2>Nueva cirugía</h2><b
 const fila = r => {
   const abierta = estado.abierto === r.id;
   return `<div class="lr ${abierta ? "ex-open" : ""}"><span class="t">${hm(inicio(r))}</span>
-    <span><b>${esc(r.nombrePaciente)}</b><br><span class="mut">${esc(r.codigoPaciente)}</span></span>
+    <span><b>${esc(r.nombrePaciente)}</b><br><span class="mut">${datosPaciente(r)}</span></span>
     <span>${esc(r.procedimiento)}</span><span class="t-q">${esc(r.quirofano)}</span>${pill(r)}${seg(r)}
     <button class="btn sm ic" data-a="exp" data-id="${r.id}" aria-expanded="${abierta}" aria-label="Expandir para editar">${IC.chev}</button></div>`
     + (abierta ? `<div class="ex">${formulario("x", r, { edicion: true })}

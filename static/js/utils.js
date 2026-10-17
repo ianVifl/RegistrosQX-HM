@@ -52,6 +52,9 @@ export const ESTATUS = {
 };
 export const infoEstatus = r => ESTATUS[r.estatus] ?? ESTATUS.PROGRAMADA;
 
+export const SEXO = { FEMENINO: "Femenino", MASCULINO: "Masculino" };
+export const EDAD_MAX = 120;
+
 /* ---------- Duración: la BD guarda minutos, el usuario ve horas ---------- */
 export const OPCIONES_DURACION = Array.from({ length: 24 }, (_, i) => (i + 1) * 30); // 30 min a 12 h
 export const etiquetaDuracion = m => {
