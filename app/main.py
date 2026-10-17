@@ -10,7 +10,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app import realtime
 from app.config import CORS_ORIGINS, STATIC_DIR
-from app.routers import auth, cirugias, reportes
+from app.routers import auth, bitacora, cirugias, reportes, usuarios
 from app.scheduler import ciclo_estatus
 
 log = logging.getLogger(__name__)
@@ -48,6 +48,8 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(cirugias.router)
 app.include_router(reportes.router)
+app.include_router(usuarios.router)
+app.include_router(bitacora.router)
 app.include_router(realtime.router)
 
 # Siempre al final: el mount en "/" captura todo lo que no coincidió antes.

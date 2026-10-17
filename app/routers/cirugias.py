@@ -1,14 +1,14 @@
 from datetime import date, datetime, timedelta
 from typing import Literal
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Response, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, Response, status
 from sqlalchemy.orm import Session
 
 from app import crud, exports, models, seguridad
 from app.config import TZ
 from app.database import get_db
 from app.realtime import manager
-from app.schemas import CirugiaCreate, CirugiaOut, CirugiaUpdate, EstatusUpdate
+from app.schemas import CirugiaCreate, CirugiaOut, CirugiaUpdate, EstatusUpdate, Pagina
 from app.validaciones import validar_rango
 
 router = APIRouter(prefix="/cirugias", tags=["cirugias"])
@@ -31,14 +31,15 @@ def _validar_traslape(db: Session, datos: CirugiaCreate, excluir_id: int | None 
         )
 
 
-@router.post("", response_model=CirugiaOut, status_code=status.HTTP_201_CREATED, dependencies=[Depends(seguridad.editor)])
+@router.post("", response_model=CirugiaOut, status_code=status.HTTP_201_CREATED)
 def crear_cirugia(
     datos: CirugiaCreate,
     background: BackgroundTasks,
     db: Session = Depends(get_db),
+    usuario: models.Usuario = Depends(seguridad.editor),
 ) -> models.Cirugia:
     _validar_traslape(db, datos)
-    cirugia = crud.crearRegistroCirugia(db, **datos.model_dump())
+    cirugia = crud.crearRegistroCirugia(db, **datos.model_dump(), autor=usuario)
     background.add_task(manager.broadcast, "cambio")
     return cirugia
 
@@ -59,6 +60,17 @@ def listar_cirugias(
     return crud.obtenerCirugiasPorFecha(db, fecha or datetime.now(TZ).date())
 
 
+@router.get("/buscar", response_model=Pagina[CirugiaOut], dependencies=[Depends(seguridad.editor)])
+def buscar_cirugias(
+    q: str = Query(min_length=2, max_length=100, description="Nombre del paciente o del cirujano"),
+    pagina: int = Query(1, ge=1),
+    tamano: int = Query(20, ge=1, le=100),
+    db: Session = Depends(get_db),
+) -> dict:
+    """Busca en todo el historial, de la cirugía más reciente a la más antigua."""
+    return crud.buscarCirugias(db, q.strip(), pagina, tamano)
+
+
 @router.get("/{cirugia_id}", response_model=CirugiaOut, dependencies=[Depends(seguridad.cualquier_rol)])
 def obtener_cirugia(cirugia_id: int, db: Session = Depends(get_db)) -> models.Cirugia:
     cirugia = crud.obtenerRegistroCirugiaPorId(db, cirugia_id)
@@ -67,42 +79,45 @@ def obtener_cirugia(cirugia_id: int, db: Session = Depends(get_db)) -> models.Ci
     return cirugia
 
 
-@router.put("/{cirugia_id}", response_model=CirugiaOut, dependencies=[Depends(seguridad.editor)])
+@router.put("/{cirugia_id}", response_model=CirugiaOut)
 def modificar_cirugia(
     cirugia_id: int,
     datos: CirugiaUpdate,
     background: BackgroundTasks,
     db: Session = Depends(get_db),
+    usuario: models.Usuario = Depends(seguridad.editor),
 ) -> models.Cirugia:
     _validar_traslape(db, datos, excluir_id=cirugia_id)
-    cirugia = crud.modificarRegistroCirugia(db, cirugia_id, **datos.model_dump())
+    cirugia = crud.modificarRegistroCirugia(db, cirugia_id, **datos.model_dump(), autor=usuario)
     if cirugia is None:
         raise _no_encontrada()
     background.add_task(manager.broadcast, "cambio")
     return cirugia
 
 
-@router.patch("/{cirugia_id}/estatus", response_model=CirugiaOut, dependencies=[Depends(seguridad.editor)])
+@router.patch("/{cirugia_id}/estatus", response_model=CirugiaOut)
 def cambiar_estatus(
     cirugia_id: int,
     datos: EstatusUpdate,
     background: BackgroundTasks,
     db: Session = Depends(get_db),
+    usuario: models.Usuario = Depends(seguridad.editor),
 ) -> models.Cirugia:
-    cirugia = crud.cambiarEstatusCirugia(db, cirugia_id, datos.estatus)
+    cirugia = crud.cambiarEstatusCirugia(db, cirugia_id, datos.estatus, autor=usuario)
     if cirugia is None:
         raise _no_encontrada()
     background.add_task(manager.broadcast, "cambio")
     return cirugia
 
 
-@router.delete("/{cirugia_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=None, dependencies=[Depends(seguridad.solo_admin)])
+@router.delete("/{cirugia_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=None)
 def eliminar_cirugia(
     cirugia_id: int,
     background: BackgroundTasks,
     db: Session = Depends(get_db),
+    usuario: models.Usuario = Depends(seguridad.solo_admin),
 ) -> Response:
-    if crud.eliminarRegistroCirugia(db, cirugia_id) is None:
+    if crud.eliminarRegistroCirugia(db, cirugia_id, autor=usuario) is None:
         raise _no_encontrada()
     background.add_task(manager.broadcast, "cambio")
     return Response(status_code=status.HTTP_204_NO_CONTENT)

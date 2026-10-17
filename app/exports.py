@@ -11,6 +11,8 @@ from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
+from app import bitacora
+
 MEDIA = {
     "pdf": "application/pdf",
     "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -33,6 +35,18 @@ COLUMNAS = [
     ("Estatus", lambda c: c.estatus),
     ("Aseguradora", lambda c: c.aseguradora or "No"),
 ]
+ANCHOS = [48, 30, 54, 76, 26, 48, 78, 86, 82, 70, 42, 64, 60]  # PDF horizontal: suman ≤ 782 pt
+
+COLUMNAS_BITACORA = [
+    ("Fecha", lambda b: b.fecha.strftime("%d/%m/%Y")),
+    ("Hora", lambda b: b.fecha.strftime("%H:%M:%S")),
+    ("Usuario", bitacora.autor),
+    ("Acción", lambda b: b.accion),
+    ("Entidad", lambda b: b.entidad),
+    ("ID", lambda b: b.entidadId or ""),
+    ("Detalle", bitacora.resumen),
+]
+ANCHOS_BITACORA = [52, 46, 140, 85, 55, 30, 370]
 
 
 def titulo_rango(desde: date, hasta: date) -> str:
@@ -41,19 +55,19 @@ def titulo_rango(desde: date, hasta: date) -> str:
     return f"Cirugías del {desde:%d/%m/%Y} al {hasta:%d/%m/%Y}"
 
 
-def generar_xlsx(cirugias, titulo: str) -> bytes:
+def generar_xlsx(filas, titulo: str, columnas=COLUMNAS, hoja: str = "Cirugías") -> bytes:
     wb = Workbook()
     ws = wb.active
-    ws.title = "Cirugías"
-    ws.append([n for n, _ in COLUMNAS])
+    ws.title = hoja  # Excel no admite / : ? * [ ] en el nombre de la hoja, por eso no se usa el título
+    ws.append([n for n, _ in columnas])
     for celda in ws[1]:
         celda.font = Font(bold=True, color="FFFFFF")
         celda.fill = PatternFill("solid", fgColor="1D4ED8")
         celda.alignment = Alignment(vertical="center")
-    for c in cirugias:
-        ws.append([f(c) for _, f in COLUMNAS])
-    for fila in ws.iter_rows(min_row=2):
-        for celda in fila:
+    for fila in filas:
+        ws.append([f(fila) for _, f in columnas])
+    for renglon in ws.iter_rows(min_row=2):
+        for celda in renglon:
             celda.alignment = Alignment(vertical="top", wrap_text=True)  # diagnóstico y servicios pueden ser largos
     for i, col in enumerate(ws.columns, start=1):
         ancho = max(len(str(celda.value or "")) for celda in col)
@@ -65,7 +79,7 @@ def generar_xlsx(cirugias, titulo: str) -> bytes:
     return buf.getvalue()
 
 
-def generar_pdf(cirugias, titulo: str) -> bytes:
+def generar_pdf(filas, titulo: str, columnas=COLUMNAS, anchos=ANCHOS) -> bytes:
     estilos = getSampleStyleSheet()
     celda = ParagraphStyle("celda", parent=estilos["BodyText"], fontSize=8, leading=10)
     cabecera = ParagraphStyle("cab", parent=celda, textColor=colors.white, fontName="Helvetica-Bold")
@@ -73,9 +87,9 @@ def generar_pdf(cirugias, titulo: str) -> bytes:
     def p(valor, estilo):
         return Paragraph(escape(str(valor)), estilo)  # escape: reportlab interpreta marcado
 
-    datos = [[p(n, cabecera) for n, _ in COLUMNAS]]
-    datos += [[p(f(c), celda) for _, f in COLUMNAS] for c in cirugias]
-    tabla = Table(datos, repeatRows=1, colWidths=[48, 30, 54, 76, 26, 48, 78, 86, 82, 70, 42, 64, 60])
+    datos = [[p(n, cabecera) for n, _ in columnas]]
+    datos += [[p(f(fila), celda) for _, f in columnas] for fila in filas]
+    tabla = Table(datos, repeatRows=1, colWidths=anchos)
     tabla.setStyle(TableStyle([
         ("LEFTPADDING", (0, 0), (-1, -1), 3),  # 13 columnas: el padding por defecto (6) parte las palabras
         ("RIGHTPADDING", (0, 0), (-1, -1), 3),
@@ -91,10 +105,12 @@ def generar_pdf(cirugias, titulo: str) -> bytes:
     return buf.getvalue()
 
 
-def respuesta_archivo(cirugias, formato: str, titulo: str, nombre: str) -> Response:
-    generar = generar_pdf if formato == "pdf" else generar_xlsx
+def respuesta_archivo(filas, formato: str, titulo: str, nombre: str,
+                      columnas=COLUMNAS, anchos=ANCHOS, hoja: str = "Cirugías") -> Response:
+    contenido = (generar_pdf(filas, titulo, columnas, anchos) if formato == "pdf"
+                 else generar_xlsx(filas, titulo, columnas, hoja))
     return Response(
-        content=generar(cirugias, titulo),
+        content=contenido,
         media_type=MEDIA[formato],
         headers={"Content-Disposition": f'attachment; filename="{nombre}.{formato}"'},
     )

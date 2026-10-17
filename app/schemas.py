@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Annotated
+from typing import Annotated, Generic, TypeVar
 
 from pydantic import BaseModel, ConfigDict, Field, computed_field, field_validator
 
@@ -145,3 +145,27 @@ class ActivoUpdate(BaseModel):
 
 class PasswordUpdate(BaseModel):
     password: Password
+
+
+# ---------- Paginación y bitácora ----------
+
+T = TypeVar("T")
+
+
+class Pagina(BaseModel, Generic[T]):
+    items: list[T]
+    total: int
+    pagina: int
+    tamano: int
+    paginas: int
+
+
+class BitacoraOut(BaseModel):
+    id: int
+    fecha: datetime
+    autor: str  # "capturista:Andrea_Villanueva" o "sistema"
+    accion: str
+    entidad: str
+    entidadId: int | None
+    detalle: dict | None
+    resumen: str
