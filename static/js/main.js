@@ -1,5 +1,5 @@
-import { estado, restaurar } from "./state.js";
-import { API } from "./api.js";
+import { estado, restaurar, paginasPermitidas, esAdmin } from "./state.js";
+import { API, irAlLogin } from "./api.js";
 import { IC } from "./icons.js";
 import { $, hm, pad, nombreDia, hoy } from "./utils.js";
 import { cargar, render, refrescar, transicion, TEMAS } from "./app.js";
@@ -12,11 +12,24 @@ const REFRESCO_MIN = 30; // corte alineado al reloj: el dashboard se resincroniz
 const SONDEO_SEG = 60;   // red de seguridad: cada cuántos segundos el dashboard pide los datos al servidor
 
 restaurar();
+raiz.dataset.theme = estado.tema;
+
+/* Sesión: sin sesión válida, API.yo() redirige al login y aquí se detiene el módulo */
+estado.usuario = await API.yo();
+const permitidas = paginasPermitidas();
+if (!permitidas.includes(estado.pagina)) estado.pagina = permitidas[0];
+document.querySelectorAll(".nav a[data-p]").forEach(a => { a.hidden = !permitidas.includes(a.dataset.p); });
+$("lUsuarios").hidden = !esAdmin();
+$("quien").textContent = estado.usuario.nombre;
+$("quien").title = `Sesión: ${estado.usuario.usuario} (${estado.usuario.rol.toLowerCase()})`;
+$("bSalir").innerHTML = IC.salir;
+$("bSalir").onclick = () => API.logout().finally(irAlLogin);
+
 iniciarAcciones();
 iniciarCalendario();
 
 /* Navegación y botones cíclicos de tema y vista */
-document.querySelectorAll(".nav a").forEach(a => a.addEventListener("click", e => {
+document.querySelectorAll(".nav a[data-p]").forEach(a => a.addEventListener("click", e => {
   e.preventDefault();
   estado.pagina = a.dataset.p;
   estado.abierto = null;

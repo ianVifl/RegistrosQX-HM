@@ -56,12 +56,18 @@ def autor(b: Bitacora) -> str:
     return f"{b.usuarioRol.lower()}:{b.usuarioNombre.replace(' ', '_')}"
 
 
+_ORDEN = {campo: i for i, campo in enumerate(CAMPOS_CIRUGIA + CAMPOS_USUARIO)}
+
+
 def resumen(b: Bitacora) -> str:
-    """Texto legible del detalle, para la pantalla y los reportes."""
+    """Texto legible del detalle, para la pantalla y los reportes.
+
+    MySQL reordena las llaves de las columnas JSON al guardarlas, así que se reordenan aquí.
+    """
     if not b.detalle:
         return ""
     partes = []
-    for campo, valor in b.detalle.items():
+    for campo, valor in sorted(b.detalle.items(), key=lambda kv: _ORDEN.get(kv[0], len(_ORDEN))):
         etiqueta = ETIQUETAS.get(campo, campo)
         if isinstance(valor, list) and len(valor) == 2:  # [antes, después]
             partes.append(f"{etiqueta}: {_texto(valor[0])} → {_texto(valor[1])}")
@@ -75,4 +81,9 @@ def _texto(valor) -> str:
         return "(vacío)"
     if isinstance(valor, bool):
         return "Sí" if valor else "No"
+    if isinstance(valor, str) and len(valor) == 19 and valor[10] == "T":  # fecha ISO de instantanea()
+        try:
+            return datetime.fromisoformat(valor).strftime("%d/%m/%Y %H:%M")
+        except ValueError:
+            pass
     return str(valor)

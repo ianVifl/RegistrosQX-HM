@@ -111,3 +111,11 @@ def test_exportar_bitacora_completa(sesion, client, base):
     r = client.get("/bitacora/exportar", params={"formato": "pdf", "desde": "2026-01-01", "hasta": "2026-12-31"})
     assert r.content.startswith(b"%PDF")
     assert 'filename="bitacora_2026-01-01_a_2026-12-31.pdf"' in r.headers["content-disposition"]
+
+
+def test_resumen_en_orden_logico_y_fechas_legibles(client, crear):
+    crear(serviciosEspeciales="Banco de sangre")
+
+    resumen = _movimientos(client)[0]["resumen"]
+    assert resumen.startswith("Paciente: Ana López; Edad: 45; Sexo: FEMENINO; Fecha: 20/10/2026 09:00;")
+    assert resumen.endswith("Diagnóstico: Colelitiasis; Servicios especiales: Banco de sangre")

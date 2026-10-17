@@ -19,6 +19,15 @@ async function ejecutar(operacion, mensajeOk, alTerminar) {
   }
 }
 
+async function cargarBusqueda() {
+  try {
+    estado.busqueda.resultado = await API.buscar(estado.busqueda.q, estado.busqueda.pagina);
+  } catch (e) {
+    toast(e.message, true);
+  }
+  render();
+}
+
 const acciones = {
   // Alta: sin cuadro de confirmación, solo aviso de éxito.
   async nuevo() {
@@ -58,6 +67,17 @@ const acciones = {
     else estado.semana = sumarDias(lunes(), 7 * d);
     cargar({ animar: true });
   },
+  // Búsqueda en el historial (Administración)
+  buscar() {
+    const q = $("bq").value.trim();
+    if (q.length < 2) return toast("Escribe al menos 2 letras para buscar", true);
+    estado.busqueda = { q, pagina: 1, resultado: null };
+    render();
+    cargarBusqueda();
+  },
+  bpag(b) { estado.busqueda.pagina += Number(b.dataset.d); cargarBusqueda(); },
+  bclear() { estado.busqueda = null; render(); },
+
   "pag-hoy"() {
     if (estado.pagina === "dash") estado.diaDash = null;
     else estado.semana = null;
@@ -69,5 +89,12 @@ export function iniciarAcciones() {
   document.addEventListener("click", e => {
     const b = e.target.closest("[data-a]");
     acciones[b?.dataset.a]?.(b);
+  });
+  // Formularios con data-f: Enter y el botón de enviar hacen lo mismo
+  document.addEventListener("submit", e => {
+    const f = e.target.closest("[data-f]");
+    if (!f) return;
+    e.preventDefault();
+    acciones[f.dataset.f]?.(f);
   });
 }

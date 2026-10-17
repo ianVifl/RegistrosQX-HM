@@ -1,4 +1,4 @@
-import { estado, lunes } from "../state.js";
+import { estado, lunes, esAdmin } from "../state.js";
 import { IC } from "../icons.js";
 import { esc, hm, inicio, agruparPorDia, nombreDia, rangoSemana } from "../utils.js";
 import { pill, seg, vacio, formulario, pager, datosPaciente } from "../components.js";
@@ -21,7 +21,7 @@ const fila = r => {
     + (abierta ? `<div class="ex">${formulario("x", r, { edicion: true })}
       <div class="acts"><button class="btn pri sm" data-a="guardar" data-id="${r.id}">Guardar cambios</button>
       <button class="btn sm" data-a="exp" data-id="${r.id}">Cancelar</button>
-      <button class="btn sm dng" data-a="eliminar" data-id="${r.id}">Eliminar</button></div></div>` : "");
+      ${esAdmin() ? `<button class="btn sm dng" data-a="eliminar" data-id="${r.id}">Eliminar</button>` : ""}</div></div>` : "");
 };
 
 /** Registros de la semana agrupados por día, cada día con sus cirugías por hora. */

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="blanco">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Usuarios - Hospital Morelos</title>
+  <link rel="icon" type="image/png" href="img/logo.png">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/forms.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="css/sesion.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <nav class="nav" aria-label="Gestión">
+    <div class="brand"><img src="img/logo.png" alt="Hospital Morelos"><div>Hospital Morelos<small>Gestión de usuarios</small></div></div>
+    <a href="./">← Volver al sistema</a>
+    <a href="#" data-t="usr">Usuarios</a>
+    <a href="#" data-t="bit">Bitácora</a>
+    <span class="sp"></span>
+    <span class="quien" id="quien"></span>
+    <button class="btn ic" id="bSalir" aria-label="Cerrar sesión" title="Cerrar sesión"></button>
+  </nav>
+  <main><div id="view"></div></main>
+  <div class="toasts" id="toasts"></div>
+  <dialog id="confirmar"></dialog>
+  <script type="module" src="js/usuarios.js"></script>
+</body>
+</html>
