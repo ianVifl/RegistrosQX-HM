@@ -23,11 +23,21 @@ cp .env.example .env
 
 ## Usuarios y roles
 
-| Rol | Puede | Sesión |
-|---|---|---|
-| `ADMIN` | Todo, incluida la gestión de usuarios, la bitácora y eliminar cirugías | 12 h |
-| `CAPTURISTA` | Registrar, editar y cambiar estatus; ver Administración y exportar. No elimina | 24 h |
-| `VISUALIZADOR` | Solo el Dashboard | 30 días |
+| Permiso | Admin | Capturista | Visualizador |
+|---|:-:|:-:|:-:|
+| Ver Dashboard | ✅ | ✅ | ✅ |
+| Ver Registro y Administración | ✅ | ✅ | ❌ |
+| Crear y editar cirugías | ✅ | ✅ | ❌ |
+| Cambiar estatus | ✅ | ✅ | ❌ |
+| **Eliminar cirugías** | ✅ | ❌ | ❌ |
+| Buscar en el historial | ✅ | ✅ | ❌ |
+| Descargar PDF/XLSX (individual, día, semana) | ✅ | ✅ | ❌ |
+| Descargar histórico completo (XLSX) | ✅ | ✅ | ❌ |
+| Gestionar usuarios | ✅ | ❌ | ❌ |
+| Ver y descargar la bitácora | ✅ | ❌ | ❌ |
+| **Duración de la sesión** | 12 h | 24 h | 30 días |
+
+Detalle y notas en [PERMISOS.md](PERMISOS.md).
 
 No hay un administrador por defecto. El primero se crea desde la terminal:
 
