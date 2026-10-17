@@ -1,3 +1,4 @@
+alembic==1.20.0
 annotated-doc==0.0.5
 annotated-types==0.8.0
 anyio==4.15.1
@@ -10,6 +11,8 @@ fastapi==0.141.1
 h11==0.16.0
 httptools==0.8.0
 idna==3.20
+Mako==1.4.3
+MarkupSafe==3.0.4
 openpyxl==3.1.5
 pillow==12.3.0
 pycparser==3.0

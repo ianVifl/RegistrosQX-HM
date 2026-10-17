@@ -10,7 +10,6 @@ from fastapi.staticfiles import StaticFiles
 
 from app import realtime
 from app.config import CORS_ORIGINS, STATIC_DIR
-from app.database import Base, engine
 from app.routers import cirugias, reportes
 from app.scheduler import ciclo_estatus
 
@@ -23,7 +22,7 @@ mimetypes.add_type("text/javascript", ".js")
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
-    Base.metadata.create_all(bind=engine)
+    # El esquema lo administra Alembic (alembic upgrade head), no la app al arrancar.
     tarea = asyncio.create_task(ciclo_estatus())
     yield
     tarea.cancel()
