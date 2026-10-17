@@ -20,6 +20,20 @@ log = logging.getLogger(__name__)
 mimetypes.add_type("text/javascript", ".js")
 
 
+class EstaticosRevalidados(StaticFiles):
+    """Archivos del frontend con Cache-Control: no-cache.
+
+    No desactiva la caché: obliga al navegador a preguntar si el archivo cambió (ETag) antes de usar
+    su copia. Si no cambió responde 304 sin reenviarlo; si cambió (nuevo despliegue) baja el nuevo.
+    Sin esta cabecera el navegador puede seguir usando JS viejo durante horas.
+    """
+
+    async def get_response(self, path, scope):
+        respuesta = await super().get_response(path, scope)
+        respuesta.headers["Cache-Control"] = "no-cache"
+        return respuesta
+
+
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     # El esquema lo administra Alembic (alembic upgrade head), no la app al arrancar.
@@ -54,6 +68,6 @@ app.include_router(realtime.router)
 
 # Siempre al final: el mount en "/" captura todo lo que no coincidió antes.
 if STATIC_DIR.is_dir():
-    app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="front")
+    app.mount("/", EstaticosRevalidados(directory=STATIC_DIR, html=True), name="front")
 else:
     log.warning("No existe la carpeta del frontend (%s): solo se sirve la API", STATIC_DIR)
