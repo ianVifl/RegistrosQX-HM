@@ -59,6 +59,10 @@ const acciones = {
   },
 
   dl(b) { const { f, id, desde, hasta } = b.dataset; API.descargar(f, { id, desde, hasta }); },
+  historico() {
+    API.descargarHistorico();
+    toast("Generando el histórico completo; con muchos registros puede tardar un poco");
+  },
 
   // Paginación: Dashboard por día; Registro y Administración por semana (lunes a domingo).
   pag(b) {

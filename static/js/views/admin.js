@@ -36,8 +36,10 @@ const tarjetas = () => !estado.datos.length ? SIN_DATOS : agruparPorDia(estado.d
     <div><b>${esc(r.procedimiento)}</b><div class="mut">${esc(r.nombrePaciente)} (${datosPaciente(r)})</div></div>
     <div class="r">${seg(r)}<span style="display:flex;gap:6px">${botonesDescarga({ id: r.id }, "", r.nombrePaciente)}</span></div></article>`).join("")}</div></section>`).join("");
 
+const botonHistorico = `<button class="btn sm" data-a="historico" title="Todas las cirugías registradas, sin límite de fechas">${IC.dl}Histórico completo (XLSX)</button>`;
+
 const encabezado = () => `<div class="head-row">${pager(`Semana del ${rangoSemana(lunes())}`)}
-  <div class="acciones-semana">${botonesDescarga(semana(), "Semana ")}</div></div>`;
+  <div class="acciones-semana">${botonesDescarga(semana(), "Semana ")}${botonHistorico}</div></div>`;
 
 /* ---------- Búsqueda en todo el historial (paginada en el servidor) ---------- */
 const buscador = () => {
@@ -76,7 +78,7 @@ export const admin = {
   modos: {
     1: oBusqueda(() => `${encabezado()}${kpis()}${tabla()}`),
     2: oBusqueda(() => `<div class="side"><aside class="stk"><div class="card panel">${pager(`Semana del ${rangoSemana(lunes())}`)}
-      <div class="acts" style="flex-direction:column">${botonesDescarga(semana(), "Semana ")}</div></div>${graficas()}</aside><section>${kpis()}${tabla()}</section></div>`),
+      <div class="acts" style="flex-direction:column">${botonesDescarga(semana(), "Semana ")}${botonHistorico}</div></div>${graficas()}</aside><section>${kpis()}${tabla()}</section></div>`),
     3: oBusqueda(() => `${encabezado()}${kpis()}<div class="two" style="margin-bottom:8px">${graficas()}</div>${tarjetas()}`),
   },
 };

@@ -73,6 +73,11 @@ def obtenerCirugiasPorRango(db: Session, desde: date, hasta: date) -> list[Cirug
     )
 
 
+def obtenerTodasLasCirugias(db: Session) -> list[Cirugia]:
+    """Todo el historial, de la más antigua a la más reciente (para el reporte histórico)."""
+    return db.query(Cirugia).order_by(Cirugia.fechaCirugia.asc(), Cirugia.id.asc()).all()
+
+
 def obtenerCirugiasPorFecha(db: Session, fecha: date) -> list[Cirugia]:
     return obtenerCirugiasPorRango(db, fecha, fecha)
 

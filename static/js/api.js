@@ -60,6 +60,9 @@ export const API = {
       : `/reportes/exportar?${consulta({ desde, hasta, formato })}`);
   },
 
+  /** Todas las cirugías en XLSX, sin límite de fechas. */
+  descargarHistorico: () => descargarRuta("/reportes/historico"),
+
   // Usuarios (solo admin)
   usuarios: () => peticion("/usuarios"),
   crearUsuario: datos => peticion("/usuarios", { method: "POST", body: cuerpo(datos) }),

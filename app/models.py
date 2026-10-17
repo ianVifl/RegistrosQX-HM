@@ -23,7 +23,6 @@ class Cirugia(Base):
     aseguradora = Column(String(255), nullable=True, default="Sin aseguradora")
     serviciosEspeciales = Column(Text, nullable=True)
     diagnostico = Column(Text, nullable=True)
-    # Auditoría: NULL en registros previos al login y en cambios del scheduler
     creadoPorId = Column(Integer, ForeignKey("usuarios.id", name="fk_cirugias_creado_por"), nullable=True)
     actualizadoPorId = Column(Integer, ForeignKey("usuarios.id", name="fk_cirugias_actualizado_por"), nullable=True)
     actualizadoEn = Column(DateTime, nullable=True)
@@ -44,8 +43,6 @@ class Usuario(Base):
 
 
 class Bitacora(Base):
-    """Registro inmutable de movimientos. Nombre y rol se copian (snapshot): la historia no cambia
-    aunque después se edite al usuario. Sin FK a la entidad: el registro sobrevive a su borrado."""
     __tablename__ = "bitacora"
     __table_args__ = (Index("idx_bitacora_fecha", "fecha"), UTF8)
 

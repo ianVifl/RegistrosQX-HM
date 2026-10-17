@@ -48,3 +48,22 @@ def test_exportar_formato_invalido_da_422(client, crear):
 
 def test_exportar_inexistente_da_404(client):
     assert client.get("/cirugias/999/exportar", params={"formato": "pdf"}).status_code == 404
+
+
+def test_historico_completo_xlsx_sin_limite_de_fechas(client, crear):
+    crear(nombrePaciente="Reciente", fechaCirugia="2026-10-20T09:00")
+    crear(nombrePaciente="Antigua", fechaCirugia="2023-01-15T09:00")  # fuera de cualquier rango de 31 días
+
+    r = client.get("/reportes/historico")
+
+    assert r.status_code == 200
+    assert r.headers["content-type"] == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    assert 'filename="cirugias_historico_completo_' in r.headers["content-disposition"]
+    hoja = load_workbook(io.BytesIO(r.content)).active
+    pacientes = [fila[3].value for fila in hoja.iter_rows(min_row=2)]
+    assert pacientes == ["Antigua", "Reciente"]  # de la más antigua a la más reciente
+
+
+def test_historico_permisos(sesion):
+    assert sesion("andrea").get("/reportes/historico").status_code == 200
+    assert sesion("tv").get("/reportes/historico").status_code == 403
