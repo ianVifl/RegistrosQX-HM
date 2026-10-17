@@ -1,27 +1,15 @@
-import os
-
-from dotenv import load_dotenv
 from sqlalchemy import URL, create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-load_dotenv()
-
-
-def _requerida(nombre: str) -> str:
-    """Falla al arrancar con un mensaje claro si falta una variable obligatoria."""
-    valor = os.getenv(nombre)
-    if not valor:
-        raise RuntimeError(f"Falta la variable de entorno {nombre}")
-    return valor
-
+from app import config
 
 url = URL.create(
     drivername="mysql+pymysql",
-    username=_requerida("DB_USER"),
-    password=_requerida("DB_PASSWORD"),
-    host=_requerida("DB_HOST"),
-    port=int(os.getenv("DB_PORT", "3306")),
-    database=_requerida("DB_NAME"),
+    username=config.DB_USER,
+    password=config.DB_PASSWORD,
+    host=config.DB_HOST,
+    port=config.DB_PORT,
+    database=config.DB_NAME,
     query={"charset": "utf8mb4"},  # explícito: evita que "Quirófano" o "Cesárea" se corrompan
 )
 engine = create_engine(url, pool_pre_ping=True)
