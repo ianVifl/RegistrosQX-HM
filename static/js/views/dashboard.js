@@ -44,7 +44,8 @@ export const dashboard = {
     1() {
       const { lista, extra } = pendientes();
       if (!lista.length) return SIN_CIRUGIAS;
-      return `<div class="gA" style="--rows:${Math.ceil(lista.length / 3)}">${lista.map(tarjeta).join("")}</div>${masIndicador(extra)}`;
+      const filas = Math.ceil(lista.length / 3);
+      return `<div class="gA${filas === 1 ? " fila1" : ""}" style="--rows:${filas}">${lista.map(tarjeta).join("")}</div>${masIndicador(extra)}`;
     },
     2() {
       const { lista, extra } = pendientes();
