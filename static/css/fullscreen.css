@@ -1,5 +1,5 @@
 :fullscreen{overflow:hidden;background:var(--bg)}
-.fs .nav a,.fs #bTema,.fs #bModo,.fs .sp{display:none}
+.fs .nav a,.fs #bTema,.fs #bModo,.fs .sp,.fs #quien,.fs #bSalir{display:none}
 .fs .nav{position:relative;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:8px 36px}
 .fs .brand{margin-right:0}
 .fs .clock{font-size:clamp(40px,7vw,120px);margin:0;padding:2px 20px}
